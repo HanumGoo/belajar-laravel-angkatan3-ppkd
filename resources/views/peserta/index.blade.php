@@ -18,7 +18,15 @@
                     <td>{{ $index += 1 }}</td>
                     <td>{{ $value->name }}</td>
                     <td>{{ $value->age }}</td>
-                    <td>delete</td>
+                    <td class="d-flex gap-3">
+                        <a href="{{ route('peserta-edit', $value->id) }}" class="btn btn-success">Edit</a>
+                        <form action="{{ route('peserta-delete', $value->id) }}" method="post">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('for real?')">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             @endforeach
         </tbody>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BelajarController;
 use App\Http\Controllers\PesertaController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,14 @@ Route::post('action-bagi', [BelajarController::class, 'bagi'])->name("action-bag
 
 Route::get('counting', [BelajarController::class, 'index'])->name('counting');
 
-Route::get('peserta', [PesertaController::class, 'index']);
+//peserta crud
+Route::get('peserta', [PesertaController::class, 'index'])->name('peserta');
 Route::get('peserta/create', [PesertaController::class, 'create'])->name('peserta-create');
 Route::post('peserta/create', [PesertaController::class, 'store'])->name('peserta-store');
+Route::get('peserta/edit/{id}', [PesertaController::class, 'edit'])->name('peserta-edit');
+Route::put('peserta/edit/{id}', [PesertaController::class, 'update'])->name('peserta-update');
+Route::delete('peserta/delete/{id}', [PesertaController::class, 'delete'])->name('peserta-delete');
+
+
+//role crud
+Route::resource('role', RoleController::class);
