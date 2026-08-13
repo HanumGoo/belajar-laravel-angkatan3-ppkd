@@ -169,7 +169,7 @@
         <ul class="sidebar-menu">
             <li><a href="{{ url('dashboard') }}" class="active">Dashboard</a></li>
             <li><a href="{{ url('role') }}">Roles</a></li>
-            <li><a href="{{ url('products') }}">Products</a></li>
+            <li><a href="{{ url('product') }}">Products</a></li>
             <li><a href="{{ url('peserta') }}">Peserta</a></li>
             <li><a href="{{ url('category') }}">Category</a></li>
         </ul>

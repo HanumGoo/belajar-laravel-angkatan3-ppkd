@@ -27,7 +27,7 @@ class CategoryController extends Controller
         ]);
         return redirect()->to('category');
     }
-    public function edit(Request $request, int $id)
+    public function edit(int $id)
     {
         $title = "Edit Category";
         $categories = Category::findOrFail($id);
