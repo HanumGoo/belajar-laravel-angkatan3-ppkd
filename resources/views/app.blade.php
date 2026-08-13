@@ -172,6 +172,7 @@
             <li><a href="{{ url('product') }}">Products</a></li>
             <li><a href="{{ url('peserta') }}">Peserta</a></li>
             <li><a href="{{ url('category') }}">Category</a></li>
+            <li><a href="{{ url('setting') }}">Setting</a></li>
         </ul>
     </aside>
 

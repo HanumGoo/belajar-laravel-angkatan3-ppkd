@@ -34,7 +34,14 @@ class ProductController extends Controller
         Product::create($data);
         return redirect()->to('product')->with('success', 'create product success');
     }
-    public function edit(Request $request, Product $product)
+    public function edit(Request $request, int $id)
+    {
+        $product = Product::with('category')->findOrFail($id);
+        $categories = Category::get();
+        $title = "Edit Product";
+        return view('product.edit', compact('title', 'product', 'categories'));
+    }
+    public function update(Request $request, Product $product)
     {
         $data = [
             'name' => $request->name,
@@ -49,15 +56,7 @@ class ProductController extends Controller
             $data['photo'] = $request->file('photo')->store('products', 'public');
         }
         $product->update($data);
-    }
-    public function update(Request $request, int $id)
-    {
-        $product = Product::findOrFail($id);
-        $product->update([
-            'name' => $request->name,
-            'is_active' => $request->has('is_active') ? 1 : 0
-        ]);
-        return redirect()->to('product');
+        return redirect()->to('product')->with('success', 'create product success');
     }
     public function destroy(int $id)
     {

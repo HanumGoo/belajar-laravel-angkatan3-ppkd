@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PesertaController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('role', RoleController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('product', ProductController::class);
+    Route::get('setting', [SettingController::class, 'index'])->name('setting');
+    Route::put('setting', [SettingController::class, 'update'])->name('setting-update');
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 });
 //get: lihat dan baca
