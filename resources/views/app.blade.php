@@ -167,11 +167,11 @@
     <aside class="sidebar">
         <div class="sidebar-brand">AdminPanel</div>
         <ul class="sidebar-menu">
-            <li><a href="#" class="active">Dashboard</a></li>
+            <li><a href="{{ url('dashboard') }}" class="active">Dashboard</a></li>
             <li><a href="{{ url('role') }}">Roles</a></li>
             <li><a href="{{ url('products') }}">Products</a></li>
             <li><a href="{{ url('peserta') }}">Peserta</a></li>
-            <li><a href="{{ url('role') }}">Pengaturan</a></li>
+            <li><a href="{{ url('category') }}">Category</a></li>
         </ul>
     </aside>
 
@@ -182,7 +182,7 @@
         <header class="navbar">
             <div><strong>Dashboard Overview</strong></div>
             <div class="user-profile">
-                <span>Admin User</span>
+                <span>{{ auth()->user()->name }}</span>
                 <div class="avatar">A</div>
             </div>
         </header>

@@ -1,15 +1,24 @@
 <?php
 
 use App\Http\Controllers\BelajarController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PesertaController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [LoginController::class, 'login']);
+Route::get('login', [LoginController::class, 'login'])->name('login');
+Route::post('actionLogin', [LoginController::class, 'actionLogin'])->name('action-login');
 
+Route::middleware('auth')->group(function () {
+    Route::resource('dashboard', DashboardController::class);
+    Route::resource('role', RoleController::class);
+    Route::resource('category', CategoryController::class);
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+});
 //get: lihat dan baca
 //post: mengirim data dari form, aksinya insert
 //put: mengirim data dari form, aksinya update
@@ -37,6 +46,5 @@ Route::get('peserta/edit/{id}', [PesertaController::class, 'edit'])->name('peser
 Route::put('peserta/edit/{id}', [PesertaController::class, 'update'])->name('peserta-update');
 Route::delete('peserta/delete/{id}', [PesertaController::class, 'delete'])->name('peserta-delete');
 
-
 //role crud
-Route::resource('role', RoleController::class);
+

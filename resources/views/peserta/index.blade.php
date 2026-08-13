@@ -1,7 +1,7 @@
 @extends('app')
 @section('content')
     <div align="right" class="mb-3">
-        <a href="{{ route('peserta-create') }}" class="btn btn-primary">Tambah Peserta</a>
+        <a href="{{ route('peserta-create') }}" class="btn btn-primary">Add Peserta</a>
     </div>
     <table class="table table-bordered">
         <thead>
