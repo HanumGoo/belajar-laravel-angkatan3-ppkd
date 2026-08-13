@@ -1,18 +1,33 @@
 @extends('app')
 @section('content')
-    <form action="{{ route('category.update', $categories->id) }}" method="post">
+    <form action="{{ route('product.store') }}" method="post" enctype="multipart/form-data">
         @csrf
-        @method('PUT')
         <div class="mb-3">
             <label for="" class="form-label">Category Name</label>
-            <input type="text" class="form-control" name="name" value="{{ $categories->name }}">
+            <select name="category_id" id="" class="form-control">
+                <option value="" hidden>Select One</option>
+                @foreach ($categories as $index => $value)
+                    <option {{ $edit->id == $value->id ? 'selected' : '' }} value="{{ $value->id }}">{{ $value->name }}
+                    </option>
+                @endforeach
+
+            </select>
         </div>
         <div class="mb-3">
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="is_active" name="is_active"
-                    {{ $categories->is_active == 1 ? 'checked' : '' }}>
-                <label class="form-check-label" for="is_active">Active</label>
-            </div>
+            <label for="" class="form-label">Name</label>
+            <input type="text" class="form-control" name="name">
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Price</label>
+            <input type="number" class="form-control" name="price" step="any">
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Photo</label>
+            <input type="file" class="form-control" name="photo">
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Description</label>
+            <textarea class="form-control" name="description"></textarea>
         </div>
 
         <div class="mb-3">
