@@ -165,7 +165,7 @@
 
 <body>
     <aside class="sidebar">
-        <div class="sidebar-brand">AdminPanel</div>
+        <div class="sidebar-brand">{{ $settings['app_name'] ?? '' }}</div>
         <ul class="sidebar-menu">
             <li><a href="{{ url('dashboard') }}" class="active">Dashboard</a></li>
             <li><a href="{{ url('role') }}">Roles</a></li>
@@ -181,7 +181,7 @@
 
         <!-- Navbar -->
         <header class="navbar">
-            <div><strong>Dashboard Overview</strong></div>
+            <div><strong>{{ $settings['app_name'] }} Dashboard</strong></div>
             <div class="user-profile">
                 <span>{{ auth()->user()->name }}</span>
                 <div class="avatar">A</div>
