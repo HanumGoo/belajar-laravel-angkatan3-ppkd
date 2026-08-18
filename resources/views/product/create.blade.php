@@ -7,7 +7,9 @@
             <select name="category_id" id="" class="form-control" required>
                 <option value="" hidden>Select One</option>
                 @foreach ($categories as $index => $value)
-                    <option value="{{ $value->id }}">{{ $value->name }}</option>
+                    @if ($value->is_active == 1)
+                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                    @endif
                 @endforeach
 
             </select>

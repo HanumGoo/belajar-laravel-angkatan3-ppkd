@@ -58,10 +58,13 @@ class ProductController extends Controller
         $product->update($data);
         return redirect()->to('product')->with('success', 'create product success');
     }
-    public function destroy(int $id)
+    public function destroy(Product $product)
     {
-        $product = Product::findOrFail($id);
+        if ($product->photo) {
+            Storage::disk('public')->delete($product->photo);
+        }
         $product->delete();
-        return redirect()->to('product');
+
+        return redirect()->to('product')->with('success', 'Delete Berhasil');
     }
 }

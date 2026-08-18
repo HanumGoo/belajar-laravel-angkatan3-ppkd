@@ -168,6 +168,7 @@
         <div class="sidebar-brand">{{ $settings['app_name'] ?? '' }}</div>
         <ul class="sidebar-menu">
             <li><a href="{{ url('dashboard') }}" class="active">Dashboard</a></li>
+            <li><a href="{{ url('order') }}">Transaction Order</a></li>
             <li><a href="{{ url('role') }}">Roles</a></li>
             <li><a href="{{ url('product') }}">Products</a></li>
             <li><a href="{{ url('peserta') }}">Peserta</a></li>

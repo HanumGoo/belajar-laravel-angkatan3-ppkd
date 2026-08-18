@@ -22,9 +22,19 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $value->category->name }}</td>
                         <td>{{ $value->name }}</td>
-                        <td>{{ $value->price }}</td>
+                        <td>Rp. {{ number_format($value->price, 2, ',', '.') }}</td>
                         <td>{{ $value->description }}</td>
-                        <td>This is Image</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <img class="rounded" width="60" src="{{ url(Storage::url($value->photo)) }}" alt=""
+                                    style="object-fit: cover">
+                                <div class="">
+                                    {{ $value->name }}
+                                </div>
+                            </div>
+
+
+                        </td>
                         <td class="d-flex gap-3">
                             <a href="{{ route('product.edit', $value->id) }}" class="btn btn-success">Edit</a>
                             <form action="{{ route('product.destroy', $value->id) }}" method="post">
