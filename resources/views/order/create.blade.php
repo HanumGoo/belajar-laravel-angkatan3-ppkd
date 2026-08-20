@@ -282,9 +282,9 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <strong>${item.name}</strong>
-                                <div class="small text-muted">Rp. ${item.price.toLocaleString('en-ID', { minimumFractionDigits: 2 })}</div>
+                                <div class="small text-muted">Rp. ${rupiahFormat(item.price)}</div>
                                 </div>
-                                <strong>Rp. ${(item.qty * item.price).toLocaleString('en-ID', { minimumFractionDigits: 2 })}</strong>
+                                <strong>Rp. ${rupiahFormat(item.qty * item.price)}</strong>
                             </div>
                             <div class="d-flex align-items-center mt-3 gap-2">
                                     <button class="btn btn-outline-danger quantity-btn rounded-2" onclick="changeItem(${index}, -1)">-</button>
@@ -302,11 +302,13 @@
                 updateCart();
             }
 
+            const cartCount = document.getElementById('cartCount');
+            const subTotal = document.getElementById('subtotal');
+            const tax = document.getElementById('tax');
+            const total = document.getElementById('total');
+
             function updateCart() {
-                const cartCount = document.getElementById('cartCount');
-                const subTotal = document.getElementById('subtotal');
-                const tax = document.getElementById('tax');
-                const total = document.getElementById('total');
+
 
                 cartCount.innerText = `${cart.length}`;
 
@@ -320,10 +322,9 @@
                 cart.forEach((item, index) => {
                     subTotalCount += item.price * item.qty;
                 });
-                tax.innerText = `Rp. ${(subTotalCount * taxes).toLocaleString('en-ID', {minimumFractionDigits: 2})}`;
-                subTotal.innerText = `Rp. ${subTotalCount.toLocaleString('en-ID', {minimumFractionDigits: 2})}`;
-                total.textContent =
-                    `Rp. ${(subTotalCount * taxes + subTotalCount).toLocaleString('en-ID', {minimumFractionDigits: 2})}`;
+                tax.innerText = `Rp. ${rupiahFormat(subTotalCount * taxes)}`;
+                subTotal.innerText = `Rp. ${rupiahFormat(subTotalCount)}`;
+                total.textContent = `Rp. ${rupiahFormat(subTotalCount * taxes + subTotalCount)}`;
 
 
             }
@@ -342,6 +343,12 @@
                 cart.splice(index, 1);
                 displayCart();
                 return;
+            }
+
+            function rupiahFormat(number) {
+                return number.toLocaleString('id-ID', {
+                    minimumFractionDigits: 2
+                })
             }
         </script>
     </body>
