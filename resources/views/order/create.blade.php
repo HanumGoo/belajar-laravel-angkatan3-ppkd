@@ -201,7 +201,7 @@
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Pajak (11%)</span>
-                                <strong id="tax">Rp. 0</strong>
+                                <strong id="tax" data-percent="11">Rp. 0</strong>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="fw-bold">Total</span>
@@ -217,8 +217,8 @@
             integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
         </script>
         <script>
-            const products = @json($products);
-            console.log(products);
+            let cart = [];
+
 
             function filterCategory(categoryId, button) {
                 const products = document.querySelectorAll('.product-item');
@@ -242,19 +242,9 @@
 
             function addToCart(productId, element) {
 
-
-                console.log(productId);
-
-                let cart = [];
-
-
-
                 const products = element;
-                console.log(products);
-                const productCard = products.closest('product-item');
-                console.log(productCard);
-                const productName = productCard.dataset.name;
-                const productPrice = productCard.dataset.price;
+                const productName = products.dataset.name;
+                const productPrice = Number(products.dataset.price);
 
                 const existingItem = cart.find((item) => {
                     return Number(item.id) === Number(productId);
@@ -270,6 +260,88 @@
                     })
                 }
                 console.log(cart);
+                displayCart();
+
+            }
+
+            function displayCart() {
+                const cartItems = document.getElementById('cartItems');
+
+                if (cart.length === 0) {
+                    cartItems.innerHTML = `<div class="text-center text-muted py-5">
+                                    <i class="bi bi-cart4"></i>
+                                    <p>Cart Still Empty</p>
+                                </div>`;
+                    return;
+                }
+                cartItems.innerHTML = '';
+
+                cart.forEach((item, index) => {
+                    cartItems.innerHTML += `
+                    <div class="cart-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>${item.name}</strong>
+                                <div class="small text-muted">Rp. ${item.price.toLocaleString('en-ID', { minimumFractionDigits: 2 })}</div>
+                                </div>
+                                <strong>Rp. ${(item.qty * item.price).toLocaleString('en-ID', { minimumFractionDigits: 2 })}</strong>
+                            </div>
+                            <div class="d-flex align-items-center mt-3 gap-2">
+                                    <button class="btn btn-outline-danger quantity-btn rounded-2" onclick="changeItem(${index}, -1)">-</button>
+                                    <span>${item.qty}</span>
+                                    <button class="btn btn-outline-success quantity-btn rounded-2" onclick="changeItem(${index}, 1)">+</button>
+                                    <button class="btn btn-outline-dark ms-auto" onclick="dumpItem(${index})">
+                                        <i class="bi bi-trash"></i>
+                                        </button>
+                                </div>
+
+                    </div>
+                    `;
+                });
+
+                updateCart();
+            }
+
+            function updateCart() {
+                const cartCount = document.getElementById('cartCount');
+                const subTotal = document.getElementById('subtotal');
+                const tax = document.getElementById('tax');
+                const total = document.getElementById('total');
+
+                cartCount.innerText = `${cart.length}`;
+
+                let subTotalCount = 0;
+                const taxes = tax.dataset.percent / 100;
+                console.log(taxes);
+                console.log(tax);
+                console.log(subTotal);
+                console.log(total);
+
+                cart.forEach((item, index) => {
+                    subTotalCount += item.price * item.qty;
+                });
+                tax.innerText = `Rp. ${(subTotalCount * taxes).toLocaleString('en-ID', {minimumFractionDigits: 2})}`;
+                subTotal.innerText = `Rp. ${subTotalCount.toLocaleString('en-ID', {minimumFractionDigits: 2})}`;
+                total.textContent =
+                    `Rp. ${(subTotalCount * taxes + subTotalCount).toLocaleString('en-ID', {minimumFractionDigits: 2})}`;
+
+
+            }
+
+            function changeItem(index, change) {
+                if (cart[index].qty === 1 && change === -1) {
+                    dumpItem(index);
+                    return;
+                }
+                cart[index].qty += change;
+                displayCart();
+                return;
+            }
+
+            function dumpItem(index) {
+                cart.splice(index, 1);
+                displayCart();
+                return;
             }
         </script>
     </body>
