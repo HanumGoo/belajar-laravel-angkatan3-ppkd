@@ -4,6 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
             integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -143,7 +144,7 @@
                                     </div>
                                     <div class="col-md-5">
                                         <input type="text" name="" id="searchProduct" class="form-control"
-                                            placeholder="Search Product...">
+                                            placeholder="Search Product..." onkeyup="searchProduct()">
                                     </div>
                                 </div>
                                 <div class="mb-4">
@@ -207,7 +208,7 @@
                                 <span class="fw-bold">Total</span>
                                 <span class="total-price" id="total">Rp. 0</span>
                             </div>
-                            <button class="btn btn-success w-100 py-3">Payment</button>
+                            <button onclick="processPayment()" class="btn btn-success w-100 py-3">Payment</button>
                         </div>
                     </div>
                 </div>
@@ -219,6 +220,40 @@
         <script>
             let cart = [];
 
+            async function processPayment() {
+                if (cart.length === 0) {
+                    alert('Cart is Empty')
+                    return;
+
+                    try {
+                        const respone = await fetch("{{ route('order.store') }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Accept": "application/json",
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            },
+                            body: JSON.stringify({
+                                items: cart.map((item) => {
+                                    return {
+                                        id: item.id,
+                                        qty: item.qty
+                                    }
+                                }),
+                                payment_method: "cash"
+                            })
+                        })
+
+                        const result = await response.json();
+                        cart = [];
+                        displayCart();
+                        location.reload();
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            }
 
             function filterCategory(categoryId, button) {
                 const products = document.querySelectorAll('.product-item');
@@ -272,6 +307,7 @@
                                     <i class="bi bi-cart4"></i>
                                     <p>Cart Still Empty</p>
                                 </div>`;
+                    updateCart();
                     return;
                 }
                 cartItems.innerHTML = '';
@@ -311,6 +347,7 @@
 
 
                 cartCount.innerText = `${cart.length}`;
+                console.log(cart.length);
 
                 let subTotalCount = 0;
                 const taxes = tax.dataset.percent / 100;
@@ -349,6 +386,23 @@
                 return number.toLocaleString('id-ID', {
                     minimumFractionDigits: 2
                 })
+            }
+
+            const search = document.getElementById('searchProduct');
+
+            function searchProduct() {
+                const searchValue = search.value.toLowerCase().trim();
+                const products = document.querySelectorAll('.product-item');
+
+                products.forEach((product) => {
+                    const productName = product.dataset.name.toLowerCase();
+
+                    if (productName.includes(searchValue)) {
+                        product.style.display = "";
+                    } else {
+                        product.style.display = "none";
+                    }
+                });
             }
         </script>
     </body>
