@@ -13,6 +13,10 @@
                 font-family: Arial, Helvetica, sans-serif;
             }
 
+            .product-item {
+                cursor: pointer;
+            }
+
             .product-card {
                 border: none;
                 border-radius: 15px;
@@ -143,15 +147,19 @@
                                     </div>
                                 </div>
                                 <div class="mb-4">
-                                    <button class="btn btn-dark btn-sm me-1 category-btn">Semua</button>
+                                    <button class="btn btn-dark btn-sm me-1 category-btn"
+                                        onclick="filterCategory('all', this)">Semua</button>
                                     @foreach ($categories as $category)
-                                        <button
-                                            class="btn btn-dark btn-sm me-1 category-btn">{{ $category->name ?? '' }}</button>
+                                        <button class="btn btn-outline-dark btn-sm me-1 category-btn"
+                                            onclick="filterCategory({{ $category->id }}, this)">{{ $category->name ?? '' }}</button>
                                     @endforeach
                                 </div>
                                 <div class="row g-3" id="productList">
                                     @foreach ($products as $product)
-                                        <div class="col-md-4 col-sm-6">
+                                        <div class="col-md-4 col-sm-6 product-item"
+                                            data-category="{{ $product->category_id }}"
+                                            onclick="addToCart({{ $product->id }}, this)" data-id="{{ $product->id }}"
+                                            data-name="{{ $product->name }}" data-price="{{ $product->price }}">
                                             <div class="card product-card shadow h-100">
                                                 <div class="product-image"><img
                                                         src="{{ asset('storage/' . $product->photo) }}" alt="">
@@ -207,6 +215,62 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
+        </script>
+        <script>
+            const products = @json($products);
+            console.log(products);
+
+            function filterCategory(categoryId, button) {
+                const products = document.querySelectorAll('.product-item');
+                products.forEach((product) => {
+                    const categoryName = product.dataset.category;
+                    if (categoryId === "all" || categoryName === String(categoryId)) {
+                        product.style.display = "";
+                    } else {
+                        product.style.display = "none";
+                    }
+                });
+
+                document.querySelectorAll('.category-btn').forEach((btn) => {
+                    btn.classList.remove('btn-dark', 'active');
+                    btn.classList.add('btn-outline-dark');
+                });
+
+                button.classList.remove('btn-outline-dark');
+                button.classList.add('btn-dark', 'active');
+            }
+
+            function addToCart(productId, element) {
+
+
+                console.log(productId);
+
+                let cart = [];
+
+
+
+                const products = element;
+                console.log(products);
+                const productCard = products.closest('product-item');
+                console.log(productCard);
+                const productName = productCard.dataset.name;
+                const productPrice = productCard.dataset.price;
+
+                const existingItem = cart.find((item) => {
+                    return Number(item.id) === Number(productId);
+                });
+                if (existingItem) {
+                    existingItem.qty++;
+                } else {
+                    cart.push({
+                        id: productId,
+                        name: productName,
+                        price: productPrice,
+                        qty: 1
+                    })
+                }
+                console.log(cart);
+            }
         </script>
     </body>
 
