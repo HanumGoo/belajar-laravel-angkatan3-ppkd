@@ -170,6 +170,7 @@
             <li><a href="{{ url('dashboard') }}" class="active">Dashboard</a></li>
             <li><a href="{{ url('order') }}">Transaction Order</a></li>
             <li><a href="{{ url('role') }}">Roles</a></li>
+            <li><a href="{{ url('menu') }}">Menu</a></li>
             <li><a href="{{ url('product') }}">Products</a></li>
             <li><a href="{{ url('peserta') }}">Peserta</a></li>
             <li><a href="{{ url('category') }}">Category</a></li>

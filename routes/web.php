@@ -4,6 +4,7 @@ use App\Http\Controllers\BelajarController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PesertaController;
 use App\Http\Controllers\ProductController;
@@ -25,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('setting', [SettingController::class, 'index'])->name('setting');
     Route::put('setting', [SettingController::class, 'update'])->name('setting-update');
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::resource('menu', MenuController::class);
 });
 //get: lihat dan baca
 //post: mengirim data dari form, aksinya insert

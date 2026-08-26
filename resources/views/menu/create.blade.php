@@ -251,7 +251,6 @@
                         location.reload();
                     } catch (error) {
                         console.log(error);
-                        alert('gagal memproses transaksi ' + error.message);
                     }
                 }
             }
@@ -406,8 +405,6 @@
                 });
             }
         </script>
-        <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
-            data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     </body>
 
     </html>

@@ -31,7 +31,39 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.id' => 'required|exist:products,id',
+            'items.*.qty' => 'required|integer|min:1',
+            'payment_method' => 'nullable|string'
+        ]);
+        try {
+            return DB::transaction(function () use ($request) {
+                $subtotal = 0;
+                $itemsData = [];
+
+                foreach ($request->items as $item) {
+                    $product = Product::find($item['id']);
+
+                    $itemSubTotal = $product->price * $item['qty'];
+                    $subtotal += $itemSubTotal;
+                }
+
+                $tax = $subtotal * 0.1;
+                $total = $subtotal + $tax;
+                $orderCode = 'ORD-' . date('ymd') . '-' . rand(1000, 9999);
+                $paymentMethod = $request->payment_method ?? 'cash';
+
+                $order = Order::create([
+                    'order_code' => $orderCode,
+                    'order_amount' => $total,
+                    'order_change' => 0,
+                    'status' => $paymentMethod === 'cash' ? 'success' : 'pending';
+                ]);
+            });
+        } catch (\Throwable $th) {
+
+        }
     }
 
     /**
