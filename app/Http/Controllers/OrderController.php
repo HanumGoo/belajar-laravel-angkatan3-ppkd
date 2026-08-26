@@ -47,6 +47,13 @@ class OrderController extends Controller
 
                     $itemSubTotal = $product->price * $item['qty'];
                     $subtotal += $itemSubTotal;
+
+                    $itemData[] = [
+                        'product' => $product,
+                        'qty' => $item['qty'],
+                        'price' => $product->price,
+                        'subtotal' => $itemSubTotal
+                    ];
                 }
 
                 $tax = $subtotal * 0.1;
