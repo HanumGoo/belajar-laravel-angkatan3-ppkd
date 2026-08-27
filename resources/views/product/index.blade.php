@@ -10,6 +10,7 @@
                     <th>No</th>
                     <th>Category Name</th>
                     <th>Name</th>
+                    <th>Qty</th>
                     <th>Price</th>
                     <th>Description</th>
                     <th>Photo</th>
@@ -22,6 +23,7 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $value->category->name }}</td>
                         <td>{{ $value->name }}</td>
+                        <td>{{ $value->qty }}</td>
                         <td>Rp. {{ number_format($value->price, 2, ',', '.') }}</td>
                         <td>{{ $value->description }}</td>
                         <td>

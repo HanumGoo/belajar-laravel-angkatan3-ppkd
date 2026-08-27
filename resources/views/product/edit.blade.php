@@ -8,7 +8,8 @@
             <select name="category_id" id="" class="form-control" required>
                 <option value="" hidden>Select One</option>
                 @foreach ($categories as $index => $value)
-                    <option {{ $product->category_id == $value->id ? 'selected' : '' }} value="{{ $value->id }}">{{ $value->name }}
+                    <option {{ $product->category_id == $value->id ? 'selected' : '' }} value="{{ $value->id }}">
+                        {{ $value->name }}
                     </option>
                 @endforeach
 
@@ -17,6 +18,10 @@
         <div class="mb-3">
             <label for="" class="form-label">Name</label>
             <input type="text" class="form-control" name="name" value="{{ $product->name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Quantity</label>
+            <input type="number" class="form-control" name="qty" value="{{ $product->qty }}">
         </div>
         <div class="mb-3">
             <label for="" class="form-label">Price</label>

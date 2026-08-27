@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class OrderController extends Controller
 {
@@ -31,18 +36,22 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+
+
         $request->validate([
             'items' => 'required|array',
-            'items.*.id' => 'required|exist:products,id',
+            'items.*.id' => 'required',
             'items.*.qty' => 'required|integer|min:1',
-            'payment_method' => 'nullable|string'
+            'payment_method' => 'nullable'
         ]);
-        try {
-            return DB::transaction(function () use ($request) {
-                $subtotal = 0;
-                $itemsData = [];
 
-                foreach ($request->items as $item) {
+        try {
+            DB::transaction(function () use ($request) {
+                $itemData = [];
+                $items = $request->items;
+
+                $subtotal = 0;
+                foreach ($items as $item) {
                     $product = Product::find($item['id']);
 
                     $itemSubTotal = $product->price * $item['qty'];
@@ -60,17 +69,69 @@ class OrderController extends Controller
                 $total = $subtotal + $tax;
                 $orderCode = 'ORD-' . date('ymd') . '-' . rand(1000, 9999);
                 $paymentMethod = $request->payment_method ?? 'cash';
-
                 $order = Order::create([
                     'order_code' => $orderCode,
                     'order_amount' => $total,
                     'order_change' => 0,
-                    'status' => $paymentMethod === 'cash' ? 'success' : 'pending';
+                    'status' => 1
                 ]);
-            });
-        } catch (\Throwable $th) {
 
+                foreach ($itemData as $data) {
+
+                    OrderDetail::create([
+                        'order_id' => $order->id,
+                        'product_id' => $data['product']->id,
+                        'order_qty' => $data['qty'],
+                        'order_price' => $data['price'],
+                        'order_subtotal' => $data['subtotal'],
+                    ]);
+                    if ($paymentMethod === 'cash') {
+                        $data['product']->decrement('qty', $data['qty']);
+                    }
+                }
+                if ($paymentMethod === 'midtrans') {
+                    Config::$serverKey = config('services.midtrans.server_key');
+                    Config::$clientKey = config('services.midtrans.client_key');
+                    Config::$isProduction = config('services.midtrans.is_production', false);
+                    Config::$isSanitized = true;
+                    Config::$is3ds = true;
+
+                    $params = [
+                        'transaction_details' => [
+                            'order_id' => $order->order_code,
+                            'gross_amount' => (int) round($total)
+                        ],
+                        'customer_details' => [
+                            'first_name' => $request->customer_name ?? 'No-Name'
+                        ]
+                        // 'enabled_payments' => ['gopay', 'qris'],
+                    ];
+                    $snapToken = Snap::getSnapToken($params);
+                    return response()->json([
+                        'success' => true,
+                        'payment_method' => 'midtrans',
+                        'snap_token' => $snapToken,
+                        'order_id' => $order->id
+                    ]);
+                }
+
+            });
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Transaksi berhasil di proses!',
+                'payment_method' => 'cash'
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Transaksi gagal di proses!' . $th
+            ], 400);
         }
+        // 200 artinya HTTP OK
+
+
+
     }
 
     /**

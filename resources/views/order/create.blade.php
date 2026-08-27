@@ -78,11 +78,69 @@
             .payment-btn {
                 border-radius: 10px;
             }
+
+            .cursor-pointer {
+                cursor: pointer;
+            }
         </style>
         <title>Kopi PPKD Jakarta Pusat</title>
     </head>
 
     <body>
+        <!-- Button trigger modal -->
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="paymentMethod" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="paymentMethodLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="paymentMethodLabel">Status</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="" class="form-label fw-semibold">Customer Name</label>
+                            <input type="text" class="form-control" id="customer_name">
+                        </div>
+                        <h5 class="mb-3 fw-bold">Pilih Metode Pembayaran</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="cash-option" class="w-100 cursor-pointer">
+                                    <input type="radio" name="payment_method" value="cash"
+                                        class="d-none payment-option" checked id="cash-option">
+                                    <div
+                                        class="card p-3 shadow-sm border payment-card text-center h-100 border-success bg-light">
+                                        <h4 class="text-success fw-bold">
+                                            <i class="bi bi-cash-stack"> Cash</i>
+                                            <p class="text-muted small">Bayar langsung di kasir secara tunai</p>
+                                        </h4>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="midtrans-option" class="w-100 cursor-pointer">
+                                    <input type="radio" name="payment_method" value="midtrans"
+                                        class="d-none payment-option" id="midtrans-option">
+                                    <div class="card p-3 shadow-sm border payment-card text-center h-100">
+                                        <h4 class="text-success fw-bold">
+                                            <i class="bi bi-cash-stack"> Midtrans</i>
+                                            <p class="text-muted small">Bayar online via QRIS / E-Wallet</p>
+                                        </h4>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                            onclick="processPayment()">Pay Now!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="container-fluid">
             <main class="col-lg-12 p-5">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -159,11 +217,13 @@
                                     @foreach ($products as $product)
                                         <div class="col-md-4 col-sm-6 product-item"
                                             data-category="{{ $product->category_id }}"
-                                            onclick="addToCart({{ $product->id }}, this)" data-id="{{ $product->id }}"
-                                            data-name="{{ $product->name }}" data-price="{{ $product->price }}">
+                                            onclick="addToCart({{ $product->id }}, this)"
+                                            data-id="{{ $product->id }}" data-name="{{ $product->name }}"
+                                            data-price="{{ $product->price }}">
                                             <div class="card product-card shadow h-100">
                                                 <div class="product-image"><img
-                                                        src="{{ asset('storage/' . $product->photo) }}" alt="">
+                                                        src="{{ asset('storage/' . $product->photo) }}"
+                                                        alt="">
                                                 </div>
                                                 <div class="card-body">
                                                     <span class="badge bgt-light text-dark mb-2">
@@ -208,51 +268,118 @@
                                 <span class="fw-bold">Total</span>
                                 <span class="total-price" id="total">Rp. 0</span>
                             </div>
-                            <button onclick="processPayment()" class="btn btn-success w-100 py-3">Payment</button>
+                            <button class="btn btn-success w-100 py-3" onclick="openModalPayment()">Payment</button>
                         </div>
                     </div>
                 </div>
             </main>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-        </script>
+
         <script>
             let cart = [];
+
+            const paymentInputs = document.querySelectorAll('.payment-option');
+
+            function updatePaymentHighlight() {
+                document.querySelectorAll('.payment-card').forEach(card => {
+                    card.classList.remove('border-success', 'border-primary', 'bg-light');
+                });
+
+                paymentInputs.forEach(input => {
+                    if (input.checked) {
+                        const card = input.nextElementSibling;
+                        card.classList.add(
+                            input.value === 'cash' ? 'border-success' : 'border-success',
+                            'bg-light'
+                        );
+                    }
+                });
+            }
+
+            paymentInputs.forEach(input => {
+                input.addEventListener('change', updatePaymentHighlight);
+            });
+
+            updatePaymentHighlight();
+
+            function openModalPayment() {
+                if (cart.length === 0) {
+                    return;
+                }
+                const modal = new bootstrap.Modal(document.getElementById('paymentMethod'));
+                modal.show();
+
+            }
 
             async function processPayment() {
                 if (cart.length === 0) {
                     alert('Cart is Empty')
                     return;
+                }
 
-                    try {
-                        const respone = await fetch("{{ route('order.store') }}", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Accept": "application/json",
-                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
-                            },
-                            body: JSON.stringify({
-                                items: cart.map((item) => {
-                                    return {
-                                        id: item.id,
-                                        qty: item.qty
-                                    }
-                                }),
-                                payment_method: "cash"
-                            })
+                const selectMethod = document.querySelector('input[name=payment_method]:checked') || 'cash';
+                const paymentMethod = selectMethod ? selectMethod.value : 'cash';
+                const customerName = document.getElementById('customer_name').value;
+                try {
+                    const response = await fetch("{{ route('order.store') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
+                        },
+                        body: JSON.stringify({
+                            items: cart.map((item) => {
+                                return {
+                                    id: item.id,
+                                    qty: item.qty
+                                }
+                            }),
+                            payment_method: paymentMethod,
+                            customer_name: customerName
                         })
+                    })
 
-                        const result = await response.json();
+                    const result = await response.json();
+
+                    if (result.payment_method === "midtrans") {
+                        window.snap.PAY(result.snap_token, {
+                            onSuccess: function(result) {
+                                /* You may add your own implementation here */
+                                alert("payment success!");
+                                cart = [];
+                                displayCart();
+                                // location.reload();
+                                console.log(result);
+                            },
+                            onPending: function(result) {
+                                /* You may add your own implementation here */
+                                alert("wating your payment!");
+                                console.log(result);
+                                location.reload();
+                            },
+                            onError: function(result) {
+                                /* You may add your own implementation here */
+                                alert("payment failed!");
+                                console.log(result);
+                            },
+                            onClose: function() {
+                                /* You may add your own implementation here */
+                                alert('you closed the popup without finishing the payment');
+                            }
+                        });
+                    } else {
                         cart = [];
                         displayCart();
-                        location.reload();
-                    } catch (error) {
-                        console.log(error);
-                        alert('gagal memproses transaksi ' + error.message);
+                        console.log(paymentMethod);
+                        console.log(customerName);
                     }
+
+                    //location.reload();
+                } catch (error) {
+                    console.log(error);
+                    alert('gagal memproses transaksi ' + error.message);
                 }
             }
 
@@ -295,7 +422,6 @@
                         qty: 1
                     })
                 }
-                console.log(cart);
                 displayCart();
 
             }
@@ -348,14 +474,9 @@
 
 
                 cartCount.innerText = `${cart.length}`;
-                console.log(cart.length);
 
                 let subTotalCount = 0;
                 const taxes = tax.dataset.percent / 100;
-                console.log(taxes);
-                console.log(tax);
-                console.log(subTotal);
-                console.log(total);
 
                 cart.forEach((item, index) => {
                     subTotalCount += item.price * item.qty;
@@ -405,6 +526,9 @@
                     }
                 });
             }
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
         </script>
         <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
             data-client-key="{{ config('services.midtrans.client_key') }}"></script>

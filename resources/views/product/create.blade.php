@@ -19,6 +19,10 @@
             <input type="text" class="form-control" name="name" required>
         </div>
         <div class="mb-3">
+            <label for="" class="form-label">Quantity</label>
+            <input type="number" class="form-control" name="qty">
+        </div>
+        <div class="mb-3">
             <label for="" class="form-label">Price</label>
             <input type="number" class="form-control" name="price" step="any" required>
         </div>

@@ -25,6 +25,7 @@ class ProductController extends Controller
         $data = [
             'name' => $request->name,
             'category_id' => $request->category_id,
+            'qty' => $request->qty,
             'price' => $request->price,
             'description' => $request->description
         ];
@@ -46,6 +47,7 @@ class ProductController extends Controller
         $data = [
             'name' => $request->name,
             'category_id' => $request->category_id,
+            'qty' => $request->qty,
             'price' => $request->price,
             'description' => $request->description
         ];
