@@ -18,7 +18,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        return view('order.index');
+        $orders = Order::orderBy("created_at","desc")->paginate(10);
+        return view('order.index', compact('orders'));
     }
 
     /**
@@ -46,7 +47,9 @@ class OrderController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($request) {
+            $snapToken = null;
+            $orderId = null;
+            DB::transaction(function () use ($request, &$orderId, &$snapToken) {
                 $itemData = [];
                 $items = $request->items;
 
@@ -75,6 +78,8 @@ class OrderController extends Controller
                     'order_change' => 0,
                     'status' => 1
                 ]);
+
+                $orderId = $order->id;
 
                 foreach ($itemData as $data) {
 
@@ -107,20 +112,25 @@ class OrderController extends Controller
                         // 'enabled_payments' => ['gopay', 'qris'],
                     ];
                     $snapToken = Snap::getSnapToken($params);
+                    
+                }
+
+            });
+            if ($request->payment_method === 'midtrans') {
                     return response()->json([
                         'success' => true,
                         'payment_method' => 'midtrans',
                         'snap_token' => $snapToken,
-                        'order_id' => $order->id
+                        'order_id' => $orderId
                     ]);
-                }
-
-            });
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Transaksi berhasil di proses!',
-                'payment_method' => 'cash'
-            ], 200);
+            }
+            else {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Transaksi berhasil di proses!',
+                    'payment_method' => 'cash'
+                ], 200);
+            }
 
         } catch (\Throwable $th) {
             return response()->json([

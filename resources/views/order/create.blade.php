@@ -344,7 +344,7 @@
                     const result = await response.json();
 
                     if (result.payment_method === "midtrans") {
-                        window.snap.PAY(result.snap_token, {
+                        window.snap.pay(result.snap_token, {
                             onSuccess: function(result) {
                                 /* You may add your own implementation here */
                                 alert("payment success!");

@@ -183,7 +183,7 @@
 
         <!-- Navbar -->
         <header class="navbar">
-            <div><strong>{{ $settings['app_name'] }} Dashboard</strong></div>
+            <div><strong>{{ $settings['app_name'] ?? ''}} Dashboard</strong></div>
             <div class="user-profile">
                 <span>{{ auth()->user()->name }}</span>
                 <div class="avatar">A</div>
