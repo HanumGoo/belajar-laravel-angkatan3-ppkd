@@ -175,6 +175,9 @@
             <li><a href="{{ url('peserta') }}">Peserta</a></li>
             <li><a href="{{ url('category') }}">Category</a></li>
             <li><a href="{{ url('setting') }}">Setting</a></li>
+            <li><a href="{{ url('setting') }}"
+                    onclick="event.preventDefault();document.getElementById('logout').submit()">Logout</a></li>
+            <form action="{{ route('logout') }}" method="post" id="logout" class="d-none"></form>
         </ul>
     </aside>
 
@@ -183,7 +186,7 @@
 
         <!-- Navbar -->
         <header class="navbar">
-            <div><strong>{{ $settings['app_name'] ?? ''}} Dashboard</strong></div>
+            <div><strong>{{ $settings['app_name'] ?? '' }} Dashboard</strong></div>
             <div class="user-profile">
                 <span>{{ auth()->user()->name }}</span>
                 <div class="avatar">A</div>

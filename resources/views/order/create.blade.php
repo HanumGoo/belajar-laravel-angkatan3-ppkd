@@ -104,12 +104,32 @@
                             <label for="" class="form-label fw-semibold">Customer Name</label>
                             <input type="text" class="form-control" id="customer_name">
                         </div>
+                        <div class="row mb-3" style="display:none" id="cashPaymentBody">
+                            <div class="col-md-12 mb01">
+                                <strong class="bg-success p-2 text-white rounded" id='total-paid'>
+                                    Harga : Rp.0
+                                </strong>
+                            </div>
+                            <div class="row only-cash d-block align-items-center mt-3">
+                                <div class="col-md-12 mb-2">
+                                    <label for="cash_paid" class="form-label" id="label-paid">
+                                        Pembayaran Cash :
+                                    </label>
+                                    <input type="number" name="" step="any" min="0" max="2"
+                                        id="cash-paid" class="form-control" oninput="calculateChange()">
+                                </div>
+                                <div class="col-md-12">
+                                    <strong class="bg-danger p-2 text-white rounded" id="change-paid">Kurang :
+                                        Rp.0</strong>
+                                </div>
+                            </div>
+                        </div>
                         <h5 class="mb-3 fw-bold">Pilih Metode Pembayaran</h5>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="cash-option" class="w-100 cursor-pointer">
+                                <label for="cash-option" class="w-100 cursor-pointer" onclick="displayCashPayment()">
                                     <input type="radio" name="payment_method" value="cash"
-                                        class="d-none payment-option" checked id="cash-option">
+                                        class="d-none payment-option" id="cash-option">
                                     <div
                                         class="card p-3 shadow-sm border payment-card text-center h-100 border-success bg-light">
                                         <h4 class="text-success fw-bold">
@@ -120,7 +140,8 @@
                                 </label>
                             </div>
                             <div class="col-md-6">
-                                <label for="midtrans-option" class="w-100 cursor-pointer">
+                                <label for="midtrans-option" class="w-100 cursor-pointer"
+                                    onclick="undisplayCashPayment()">
                                     <input type="radio" name="payment_method" value="midtrans"
                                         class="d-none payment-option" id="midtrans-option">
                                     <div class="card p-3 shadow-sm border payment-card text-center h-100">
@@ -278,6 +299,16 @@
         <script>
             let cart = [];
 
+            const cartCount = document.getElementById('cartCount');
+            const subTotal = document.getElementById('subtotal');
+            const tax = document.getElementById('tax');
+            const total = document.getElementById('total');
+            const totalPaid = document.getElementById('total-paid');
+            const cashPaid = document.getElementById('cash-paid');
+            const changePaid = document.getElementById('change-paid');
+            const labelPaid = document.getElementById('label-paid');
+            let totalCurrent = 0;
+
             const paymentInputs = document.querySelectorAll('.payment-option');
 
             function updatePaymentHighlight() {
@@ -307,7 +338,9 @@
                     return;
                 }
                 const modal = new bootstrap.Modal(document.getElementById('paymentMethod'));
+                calculateChange();
                 modal.show();
+
 
             }
 
@@ -337,7 +370,8 @@
                                 }
                             }),
                             payment_method: paymentMethod,
-                            customer_name: customerName
+                            customer_name: customerName,
+
                         })
                     })
 
@@ -465,10 +499,34 @@
                 updateCart();
             }
 
-            const cartCount = document.getElementById('cartCount');
-            const subTotal = document.getElementById('subtotal');
-            const tax = document.getElementById('tax');
-            const total = document.getElementById('total');
+
+
+            const formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+            });
+
+            // Format value when focus leaves the input
+            changePaid.addEventListener('blur', (e) => {
+                // 1. Strip non-numeric characters except decimal points
+                const cleanValue = e.target.value.replace(/[^0-9.]/g, '');
+
+                // 2. Parse as float before formatting
+                const numericValue = parseFloat(cleanValue);
+
+                // 3. Format if it's a valid number
+                if (!isNaN(numericValue)) {
+                    e.target.value = formatter.format(numericValue);
+                } else {
+                    e.target.value = '';
+                }
+            });
+
+            // Strip currency formatting when user re-enters the field to edit
+            changePaid.addEventListener('focus', (e) => {
+                e.target.value = e.target.value.replace(/[^0-9.]/g, '');
+            });
 
             function updateCart() {
 
@@ -484,8 +542,30 @@
                 tax.innerText = `Rp. ${rupiahFormat(subTotalCount * taxes)}`;
                 subTotal.innerText = `Rp. ${rupiahFormat(subTotalCount)}`;
                 total.textContent = `Rp. ${rupiahFormat(subTotalCount * taxes + subTotalCount)}`;
+                totalCurrent = subTotalCount * taxes + subTotalCount;
+                changePaid.innerText = "Kurang : Rp. " + rupiahFormat(totalCurrent);
+                totalPaid.innerText = "Harga : " + total.textContent;
 
 
+            }
+
+            function calculateChange() {
+                const changer = totalCurrent - parseFloat(cashPaid.value);
+                if (cashPaid.value == "") {
+                    changePaid.innerText = "Kurang : Rp. " + rupiahFormat(totalCurrent);
+                    changePaid.classList.remove("bg-success");
+                    changePaid.classList.add("bg-danger");
+                    return;
+                }
+                if (changer < 0) {
+                    changePaid.innerText = "Kembalian : Rp. " + rupiahFormat(Math.abs(changer)) + " + piring";
+                    changePaid.classList.remove("bg-danger");
+                    changePaid.classList.add("bg-success");
+                    return;
+                }
+                changePaid.innerText = "Kurang : Rp. " + rupiahFormat(changer);
+                changePaid.classList.remove("bg-success");
+                changePaid.classList.add("bg-danger");
             }
 
             function changeItem(index, change) {
@@ -525,6 +605,17 @@
                         product.style.display = "none";
                     }
                 });
+            }
+
+            const cashBody = document.getElementById('cashPaymentBody');
+
+
+            function displayCashPayment() {
+                cashBody.style.display = "";
+            }
+
+            function undisplayCashPayment() {
+                cashBody.style.display = "none";
             }
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"

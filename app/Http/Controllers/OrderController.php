@@ -18,7 +18,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::orderBy("created_at","desc")->paginate(10);
+        $orders = Order::orderBy("created_at", "desc")->paginate(10);
         return view('order.index', compact('orders'));
     }
 
@@ -112,19 +112,18 @@ class OrderController extends Controller
                         // 'enabled_payments' => ['gopay', 'qris'],
                     ];
                     $snapToken = Snap::getSnapToken($params);
-                    
+
                 }
 
             });
             if ($request->payment_method === 'midtrans') {
-                    return response()->json([
-                        'success' => true,
-                        'payment_method' => 'midtrans',
-                        'snap_token' => $snapToken,
-                        'order_id' => $orderId
-                    ]);
-            }
-            else {
+                return response()->json([
+                    'success' => true,
+                    'payment_method' => 'midtrans',
+                    'snap_token' => $snapToken,
+                    'order_id' => $orderId
+                ]);
+            } else {
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Transaksi berhasil di proses!',
