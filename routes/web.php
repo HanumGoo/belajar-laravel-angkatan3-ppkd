@@ -22,6 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('role', RoleController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('product', ProductController::class);
+    Route::get('order/creater', [OrderController::class, 'creater'])->name('order.creater');
+    Route::post('/midtrans/notification', [OrderController::class, 'notification'])->name('midtrans.notification');
     Route::resource('order', OrderController::class);
     Route::get('setting', [SettingController::class, 'index'])->name('setting');
     Route::put('setting', [SettingController::class, 'update'])->name('setting-update');

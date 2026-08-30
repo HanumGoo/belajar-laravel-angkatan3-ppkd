@@ -32,9 +32,61 @@ class OrderController extends Controller
         return view('order.create', compact('categories', 'products'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function creater()
+    {
+        $categories = Category::get();
+        $products = Product::OrderBy('id')->get();
+        return view('order.creater', compact('categories', 'products'));
+    }
+
+    public function notification(Request $request)
+    {
+        dd($request->all());
+        $order = Order::where(
+            'order_id',
+            $request->order_id
+        )->first();
+
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        if ($request->transaction_status === 'settlement' ||
+            $request->transaction_status === 'capture') {
+
+            if ($request->fraud_status === 'challenge') {
+                $order->update([
+                    'status' => 1
+                ]);
+            } else {
+                $order->update([
+                    'status' => 2
+                ]);
+            }
+
+        } elseif ($request->transaction_status === 'pending') {
+
+            $order->update([
+                'status' => 1
+            ]);
+
+        } elseif (
+            $request->transaction_status === 'deny' ||
+            $request->transaction_status === 'expire' ||
+            $request->transaction_status === 'cancel'
+        ) {
+
+            $order->update([
+                'status' => 0
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Notification processed'
+        ]);
+    }
     public function store(Request $request)
     {
 
@@ -68,14 +120,14 @@ class OrderController extends Controller
                     ];
                 }
 
-                $tax = $subtotal * 0.1;
+                $tax = $subtotal * 0.11;
                 $total = $subtotal + $tax;
                 $orderCode = 'ORD-' . date('ymd') . '-' . rand(1000, 9999);
                 $paymentMethod = $request->payment_method ?? 'cash';
                 $order = Order::create([
                     'order_code' => $orderCode,
                     'order_amount' => $total,
-                    'order_change' => 0,
+                    'order_change' => $request->change_amount,
                     'status' => 1
                 ]);
 
