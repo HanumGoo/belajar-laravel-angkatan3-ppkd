@@ -169,13 +169,16 @@
         <ul class="sidebar-menu">
             @if (auth()->user()->role_id == 3)
                 <li><a href="{{ url('dashboard') }}" class="active">Dashboard</a></li>
+                <li><a href="{{ url('product') }}">Products</a></li>
+                <li><a href="{{ url('order') }}">Transaction Order</a></li>
             @elseif (auth()->user()->role_id == 2)
                 <li><a href="{{ url('cashier/dashboard') }}" class="active">Dashboard</a></li>
+                <li><a href="{{ url('order') }}">Transaction Order</a></li>
             @elseif (auth()->user()->role_id == 1)
                 <li><a href="{{ url('admin/dashboard') }}" class="active">Dashboard</a></li>
-                <li><a href="{{ url('order') }}">Transaction Order</a></li>
                 <li><a href="{{ url('role') }}">Roles</a></li>
                 <li><a href="{{ url('menu') }}">Menu</a></li>
+                <li><a href="{{ url('order') }}">Transaction Order</a></li>
                 <li><a href="{{ url('product') }}">Products</a></li>
                 <li><a href="{{ url('peserta') }}">Peserta</a></li>
                 <li><a href="{{ url('category') }}">Category</a></li>

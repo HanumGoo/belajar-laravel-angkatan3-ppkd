@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class Cashier
+class AdminOrManager
 {
     /**
      * Handle an incoming request.
@@ -16,7 +16,8 @@ class Cashier
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->role_id != 2) {
+        $userRoleId = Auth::user()->role_id;
+        if ($userRoleId != 3 || $userRoleId != 1) {
             return redirect('/');
         }
         return $next($request);

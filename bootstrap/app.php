@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\Administrator;
+use App\Http\Middleware\AdminOrManager;
 use App\Http\Middleware\Cashier;
 use App\Http\Middleware\Manager;
 use Illuminate\Foundation\Application;
@@ -17,16 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => Administrator::class,
-        ]);
-    })
-    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias([
             'kasir' => Cashier::class,
-        ]);
-    })
-    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias([
             'pimpinan' => Manager::class,
+            'adminorpimpinan' => AdminOrManager::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -14,30 +14,33 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LoginController::class, 'login']);
-Route::get('login', [LoginController::class, 'login'])->name('login');
+Route::get('login', [LoginController::class, 'login'])->middleware('guest')->name('login');
 Route::post('actionLogin', [LoginController::class, 'actionLogin'])->name('action-login');
 
 Route::middleware('auth')->group(function () {
-    Route::resource('dashboard', DashboardController::class);
-    Route::resource('role', RoleController::class);
-    Route::resource('category', CategoryController::class);
-    Route::resource('product', ProductController::class);
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('order/creater', [OrderController::class, 'creater'])->name('order.creater');
     Route::post('/midtrans/notification', [OrderController::class, 'notification'])->name('midtrans.notification');
     Route::resource('order', OrderController::class);
-    Route::get('setting', [SettingController::class, 'index'])->name('setting');
-    Route::put('setting', [SettingController::class, 'update'])->name('setting-update');
-    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
-    Route::resource('menu', MenuController::class);
+    Route::resource('dashboard', DashboardController::class);
 });
+
 Route::middleware(['auth', 'admin'])->group(function () {
 
+    Route::get('setting', [SettingController::class, 'index'])->name('setting');
+    Route::put('setting', [SettingController::class, 'update'])->name('setting-update');
+    Route::resource('menu', MenuController::class);
+    Route::resource('role', RoleController::class);
+    Route::resource('category', CategoryController::class);
 });
-Route::middleware(['auth', 'kasir'])->group(function () {
 
+Route::middleware(['auth', 'adminorpimpinan'])->group(function () {
+    Route::resource('product', ProductController::class);
+});
+
+Route::middleware(['auth', 'kasir'])->group(function () {
 });
 Route::middleware(['auth', 'pimpinan'])->group(function () {
-
 });
 
 //get: lihat dan baca
