@@ -17,7 +17,7 @@ class AdminOrManager
     public function handle(Request $request, Closure $next): Response
     {
         $userRoleId = Auth::user()->role_id;
-        if ($userRoleId != 3 || $userRoleId != 1) {
+        if ($userRoleId != 3 && $userRoleId != 1) {
             return redirect('/');
         }
         return $next($request);
