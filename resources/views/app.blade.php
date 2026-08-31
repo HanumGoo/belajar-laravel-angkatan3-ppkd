@@ -167,14 +167,20 @@
     <aside class="sidebar">
         <div class="sidebar-brand">{{ $settings['app_name'] ?? '' }}</div>
         <ul class="sidebar-menu">
-            <li><a href="{{ url('dashboard') }}" class="active">Dashboard</a></li>
-            <li><a href="{{ url('order') }}">Transaction Order</a></li>
-            <li><a href="{{ url('role') }}">Roles</a></li>
-            <li><a href="{{ url('menu') }}">Menu</a></li>
-            <li><a href="{{ url('product') }}">Products</a></li>
-            <li><a href="{{ url('peserta') }}">Peserta</a></li>
-            <li><a href="{{ url('category') }}">Category</a></li>
-            <li><a href="{{ url('setting') }}">Setting</a></li>
+            @if (auth()->user()->role_id == 3)
+                <li><a href="{{ url('dashboard') }}" class="active">Dashboard</a></li>
+            @elseif (auth()->user()->role_id == 2)
+                <li><a href="{{ url('cashier/dashboard') }}" class="active">Dashboard</a></li>
+            @elseif (auth()->user()->role_id == 1)
+                <li><a href="{{ url('admin/dashboard') }}" class="active">Dashboard</a></li>
+                <li><a href="{{ url('order') }}">Transaction Order</a></li>
+                <li><a href="{{ url('role') }}">Roles</a></li>
+                <li><a href="{{ url('menu') }}">Menu</a></li>
+                <li><a href="{{ url('product') }}">Products</a></li>
+                <li><a href="{{ url('peserta') }}">Peserta</a></li>
+                <li><a href="{{ url('category') }}">Category</a></li>
+                <li><a href="{{ url('setting') }}">Setting</a></li>
+            @endif
             <li><a href="{{ url('setting') }}"
                     onclick="event.preventDefault();document.getElementById('logout').submit()">Logout</a></li>
             <form action="{{ route('logout') }}" method="post" id="logout" class="d-none"></form>

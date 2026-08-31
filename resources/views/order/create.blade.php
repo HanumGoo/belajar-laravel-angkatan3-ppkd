@@ -92,15 +92,17 @@
                 @page {
                     margin: 0;
                 }
+
                 body * {
                     visibility: hidden;
                 }
-                
 
-                #receipt-print-area, #receipt-print-area * {
+
+                #receipt-print-area,
+                #receipt-print-area * {
                     visibility: visible;
                 }
-                
+
                 #receipt-print-area {
                     position: absolute;
                     left: 0;
@@ -166,7 +168,8 @@
                                 </label>
                             </div>
                             <div class="col-md-6">
-                                <label for="midtrans-option" class="w-100 cursor-pointer" onclick="undisplayCashPayment()">
+                                <label for="midtrans-option" class="w-100 cursor-pointer"
+                                    onclick="undisplayCashPayment()">
                                     <input type="radio" name="payment_method" value="midtrans"
                                         class="d-none payment-option" id="midtrans-option">
                                     <div class="card p-3 shadow-sm border payment-card text-center h-100">
@@ -255,8 +258,9 @@
                                             <span class="input-group-text bg-white border-end-0">
                                                 <i class="bi bi-search text-muted"></i>
                                             </span>
-                                            <input type="text" name="" id="searchProduct" class="form-control border-start-0"
-                                                placeholder="Search Product..." onkeyup="searchProduct()">
+                                            <input type="text" name="" id="searchProduct"
+                                                class="form-control border-start-0" placeholder="Search Product..."
+                                                onkeyup="searchProduct()">
                                         </div>
                                     </div>
                                 </div>
@@ -281,23 +285,25 @@
                                         <div class="col-md-4 col-sm-6 product-item cursor-pointer"
                                             data-category="{{ $product->category_id }}"
                                             onclick="addToCart({{ $product->id }}, this)"
-                                            data-id="{{ $product->id }}" 
-                                            data-name="{{ $product->name }}"
+                                            data-id="{{ $product->id }}" data-name="{{ $product->name }}"
                                             data-price="{{ $product->price }}">
-                                            
+
                                             <div class="card product-card shadow h-100">
                                                 <div class="product-image">
-                                                    <img src="{{ asset('storage/' . $product->photo) }}" alt="">
+                                                    <img src="{{ asset('storage/' . $product->photo) }}"
+                                                        alt="">
                                                 </div>
                                                 <div class="card-body">
                                                     <span class="badge bgt-light text-dark mb-2">
-                                                        <i class="bi bi-info-circle me-1"></i> {{ $product->description ?? '' }}
+                                                        <i class="bi bi-info-circle me-1"></i>
+                                                        {{ $product->description ?? '' }}
                                                     </span>
                                                     <h6 class="fw-bold">{{ $product->name ?? '' }}</h6>
-                                                    <span class="price">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                                    <span class="price">Rp
+                                                        {{ number_format($product->price, 0, ',', '.') }}</span>
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
                                     @endforeach
                                 </div>
@@ -316,7 +322,8 @@
                                     0
                                 </span>
                             </div>
-                            <div class="mb-3 custom-scrollbar" id="cartItems" style="max-height: 320px; overflow-y: auto;">
+                            <div class="mb-3 custom-scrollbar" id="cartItems"
+                                style="max-height: 320px; overflow-y: auto;">
                                 <div class="text-center text-muted py-5">
                                     <i class="bi bi-cart4 fs-1 opacity-50 d-block mb-2"></i>
                                     <p class="mb-0">Cart Still Empty</p>
@@ -334,7 +341,9 @@
                                 <span class="fw-bold">Total</span>
                                 <span class="total-price fw-bold" id="total">Rp. 0</span>
                             </div>
-                            <button class="btn btn-success w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2 btn-pay" onclick="openModalPayment()">
+                            <button
+                                class="btn btn-success w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2 btn-pay"
+                                onclick="openModalPayment()">
                                 <i class="bi bi-credit-card"></i> Payment
                             </button>
                         </div>
@@ -344,7 +353,8 @@
         </div>
 
         <div id="receipt-print-area" class="d-none d-print-block">
-            <div style="width: 80mm; font-family: 'Courier New', Courier, monospace; font-size: 12px; margin: 0 auto; padding: 10px;">
+            <div
+                style="width: 80mm; font-family: 'Courier New', Courier, monospace; font-size: 12px; margin: 0 auto; padding: 10px;">
                 <div class="text-center mb-3">
                     <h4 class="fw-bold mb-1">{{ $settings['app_name'] }}</h4>
                     <p class="mb-0">{{ $settings['app_address'] }}</p>
@@ -354,6 +364,7 @@
 
                 <div class="mb-2">
                     <div><strong>No. Order:</strong> <span id="receipt-order-id">-</span></div>
+                    <div><strong>Code Order:</strong> <span id="receipt-order-code">-</span></div>
                     <div><strong>Tgl:</strong> <span id="receipt-date">-</span></div>
                     <div id="payment-method-success"><strong>Metode:</strong> Midtrans</div>
                 </div>
@@ -373,7 +384,8 @@
                     <span>Pajak (11%):</span>
                     <span id="receipt-tax">Rp 0</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; margin-top: 4px;">
+                <div
+                    style="display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; margin-top: 4px;">
                     <span>TOTAL:</span>
                     <span id="receipt-total">Rp 0</span>
                 </div>
@@ -387,6 +399,12 @@
         </div>
 
         <script>
+            window.addEventListener('afterprint', function() {
+                location.reload();
+            });
+
+
+
             const cartCount = document.getElementById('cartCount');
             const subTotal = document.getElementById('subtotal');
             const tax = document.getElementById('tax');
@@ -435,7 +453,7 @@
                     });
                     return;
                 }
-                
+
                 const modal = new bootstrap.Modal(document.getElementById('paymentMethod'));
                 calculateChange();
                 modal.show();
@@ -446,7 +464,13 @@
                 if (cart.length === 0) {
                     return;
                 }
-                if (changerCurrent > 0 || changerCurrent == "0") {
+
+
+                const selectMethod = document.querySelector('input[name=payment_method]:checked') || 'cash';
+                const paymentMethod = selectMethod ? selectMethod.value : 'cash';
+                const customerName = document.getElementById('customer_name').value;
+
+                if ((changerCurrent > 0 || changerCurrent == "0") && paymentMethod === 'cash') {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Go back if you dont have money!',
@@ -457,9 +481,7 @@
                     return;
                 }
 
-                const selectMethod = document.querySelector('input[name=payment_method]:checked') || 'cash';
-                const paymentMethod = selectMethod ? selectMethod.value : 'cash';
-                const customerName = document.getElementById('customer_name').value;
+
                 try {
                     const response = await fetch("{{ route('order.store') }}", {
                         method: "POST",
@@ -478,7 +500,7 @@
                             }),
                             payment_method: paymentMethod,
                             customer_name: customerName,
-                            change_amount: changerCurrent
+                            change_amount: Math.abs(changerCurrent)
                         })
                     })
 
@@ -495,7 +517,8 @@
                                     confirmButtonColor: '#198754',
                                     confirmButtonText: 'Lanjut'
                                 }).then(() => {
-                                    midtransNotificationHandler(res.order_id, res.transaction_status, res.fraud_status);
+                                    midtransNotificationHandler(res.order_id, res.transaction_status,
+                                        res.fraud_status, 'midtrans');
                                 }).then(() => {
                                     // Step 2: Ask if Admin wants to print the receipt
                                     Swal.fire({
@@ -510,14 +533,18 @@
                                     }).then((printResult) => {
                                         if (printResult.isConfirmed) {
                                             // Populate print template data, then trigger print dialog
-                                            renderReceiptData(res);
-                                            window.print();
+                                            renderReceiptData(res, result);
+
+                                            setTimeout(() => {
+                                                window.print();
+                                            }, 100);
+
                                         }
 
                                         // Step 3: Clear cart after decision
                                         cart = [];
                                         displayCart();
-                                        // location.reload();
+                                        //location.reload();
                                     });
                                 });
                             },
@@ -530,7 +557,8 @@
                                     confirmButtonColor: '#ffc107',
                                     confirmButtonText: 'Paham'
                                 }).then(() => {
-                                    midtransNotificationHandler(res.order_id, res.transaction_status, res.fraud_status);
+                                    midtransNotificationHandler(res.order_id, res.transaction_status,
+                                        res.fraud_status, 'midtrans');
                                     location.reload();
                                 });
                             },
@@ -543,7 +571,8 @@
                                     confirmButtonColor: '#dc3545',
                                     confirmButtonText: 'Coba Lagi'
                                 });
-                                midtransNotificationHandler(res.order_id, res.transaction_status, res.fraud_status);
+                                midtransNotificationHandler(res.order_id, res.transaction_status, res
+                                    .fraud_status, 'midtrans');
                             },
                             onClose: function(res) {
                                 Swal.fire({
@@ -553,19 +582,44 @@
                                     confirmButtonColor: '#0d6efd',
                                     confirmButtonText: 'OK'
                                 });
-                                midtransNotificationHandler(res.order_id, res.transaction_status, res.fraud_status);
+                                midtransNotificationHandler(res.order_id, res.transaction_status, res
+                                    .fraud_status, 'midtrans');
                             }
                         });
                     } else {
                         Swal.fire({
-                                    icon: 'success',
-                                    title: 'Pembayaran Berhasil!',
-                                    text: 'Transaksi telah selesai.',
-                                    confirmButtonColor: '#198754',
-                                    confirmButtonText: 'Lanjut'
-                                });
-                        cart = [];
-                        displayCart();
+                            icon: 'success',
+                            title: 'Pembayaran Berhasil!',
+                            text: 'Transaksi telah selesai.',
+                            confirmButtonColor: '#198754',
+                            confirmButtonText: 'Lanjut'
+                        }).then(() => {
+                            // Step 2: Ask if Admin wants to print the receipt
+                            Swal.fire({
+                                icon: 'question',
+                                title: 'Cetak Struk?',
+                                text: 'Apakah Anda ingin mencetak struk pembayaran ini?',
+                                showCancelButton: true,
+                                confirmButtonColor: '#198754',
+                                cancelButtonColor: '#6c757d',
+                                confirmButtonText: '<i class="bi bi-printer"></i> Cetak',
+                                cancelButtonText: 'Tutup'
+                            }).then((printResult) => {
+                                if (printResult.isConfirmed) {
+                                    // Populate print template data, then trigger print dialog
+                                    renderReceiptData('cash', result);
+                                    setTimeout(() => {
+                                        window.print();
+                                    }, 100);
+                                }
+
+                                // Step 3: Clear cart after decision
+                                cart = [];
+                                displayCart();
+                                midtransNotificationHandler(result.order_id, null, null, 'cash');
+                                // location.reload();
+                            });
+                        });
                         console.log(paymentMethod);
                         console.log(customerName);
                     }
@@ -578,8 +632,8 @@
             }
 
             // function midtransNotificationHandler(order_id, transaction_status, fraud_status) {
-                
-            //     fetch('{{ route("midtrans.notification") }}', {
+
+            //     fetch('{{ route('midtrans.notification') }}', {
             //         method: 'POST',
             //         headers: {
             //             'Content-Type': 'application/json',
@@ -599,16 +653,18 @@
             async function midtransNotificationHandler(
                 order_id,
                 transaction_status,
-                fraud_status
+                fraud_status,
+                payment_method
             ) {
 
                 console.log("Sending notification:", {
                     order_id,
                     transaction_status,
-                    fraud_status
+                    fraud_status,
+                    payment_method
                 });
 
-                const response = await fetch('{{ route("midtrans.notification") }}', {
+                const response = await fetch('{{ route('midtrans.notification') }}', {
                     method: 'POST',
 
                     headers: {
@@ -622,7 +678,8 @@
                     body: JSON.stringify({
                         order_id: order_id,
                         transaction_status: transaction_status,
-                        fraud_status: fraud_status
+                        fraud_status: fraud_status,
+                        payment_method: payment_method
                     })
                 });
 
@@ -635,9 +692,10 @@
                 return data;
             }
 
-            function renderReceiptData(midtransResult) {
+            function renderReceiptData(midtransResult, result) {
 
-                document.getElementById('receipt-order-id').innerText = midtransResult.order_id || 'TRX-' + Date.now();
+                document.getElementById('receipt-order-id').innerText = midtransResult.order_id || result.order_id;
+                document.getElementById('receipt-order-code').innerText = midtransResult.order_code || result.order_code;
                 document.getElementById('receipt-date').innerText = new Date().toLocaleString('id-ID');
 
                 const tableBody = document.getElementById('receipt-items-table');
@@ -659,7 +717,8 @@
                 document.getElementById('receipt-subtotal').innerText = document.getElementById('subtotal').innerText;
                 document.getElementById('receipt-tax').innerText = document.getElementById('tax').innerText;
                 document.getElementById('receipt-total').innerText = document.getElementById('total').innerText;
-                document.getElementById('payment-method-success').innerHTML = `<strong>Metode:</strong> ${midtransResult.payment_type || 'Midtrans'}`;
+                document.getElementById('payment-method-success').innerHTML =
+                    `<strong>Metode:</strong> ${midtransResult.payment_type || result.payment_method}`;
             }
 
             const formatter = new Intl.NumberFormat('en-US', {
@@ -732,8 +791,9 @@
 
             }
 
+            const cartItems = document.getElementById('cartItems');
+
             function displayCart() {
-                const cartItems = document.getElementById('cartItems');
 
                 if (cart.length === 0) {
                     cartItems.innerHTML = `<div class="text-center text-muted py-5">
@@ -773,7 +833,6 @@
 
 
             function updateCart() {
-
 
                 cartCount.innerText = `${cart.length}`;
 
@@ -862,14 +921,13 @@
             function undisplayCashPayment() {
                 cashBody.style.display = "none";
             }
-            
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
         </script>
         <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js"
             data-client-key="{{ config('services.midtrans.client_key') }}"></script>
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </body>
 
     </html>

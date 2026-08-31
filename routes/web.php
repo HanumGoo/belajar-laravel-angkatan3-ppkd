@@ -30,6 +30,16 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     Route::resource('menu', MenuController::class);
 });
+Route::middleware(['auth', 'admin'])->group(function () {
+
+});
+Route::middleware(['auth', 'kasir'])->group(function () {
+
+});
+Route::middleware(['auth', 'pimpinan'])->group(function () {
+
+});
+
 //get: lihat dan baca
 //post: mengirim data dari form, aksinya insert
 //put: mengirim data dari form, aksinya update

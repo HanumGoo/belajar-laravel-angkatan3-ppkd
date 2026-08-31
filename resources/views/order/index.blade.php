@@ -22,9 +22,12 @@
                 <tr>
                     <td>{{ $index += 1 }}</td>
                     <td>{{ $value->order_code }}</td>
-                    <td>{{ $value->order_amount }}</td>
-                    <td>{{ $value->order_change }}</td>
-                    <td>{{ $value->status ? 'true' : 'false' }}</td>
+                    <td>Rp {{ number_format($value->order_amount, 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($value->order_change, 0, ',', '.') }}</td>
+                    <td><span
+                            class="badge text-bg-{{ $value->status == 2 ? 'success' : ($value->status == 1 ? 'warning' : 'danger') }}">
+                            {{ $value->status == 2 ? 'paid' : ($value->status == 1 ? 'pending' : 'denied') }}
+                        </span></td>
                 </tr>
             @endforeach
         </tbody>

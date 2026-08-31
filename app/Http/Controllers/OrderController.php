@@ -18,7 +18,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::orderBy("created_at", "desc")->paginate(10);
+        $orders = Order::orderBy("created_at", "desc")->get();
         return view('order.index', compact('orders'));
     }
 
@@ -41,20 +41,27 @@ class OrderController extends Controller
 
     public function notification(Request $request)
     {
-        dd($request->all());
-        $order = Order::where(
-            'order_id',
-            $request->order_id
-        )->first();
-
+        $order = Order::where('id', $request->order_id)->first();
         if (!$order) {
             return response()->json([
                 'message' => 'Order not found'
             ], 404);
         }
 
-        if ($request->transaction_status === 'settlement' ||
-            $request->transaction_status === 'capture') {
+        //for cash
+        if ($request->payment_method == 'cash') {
+            $order->update([
+                'status' => 2
+            ]);
+            return response()->json([
+                'message' => 'Notification processed on cash'
+            ]);
+        }
+
+        if (
+            $request->transaction_status === 'settlement' ||
+            $request->transaction_status === 'capture'
+        ) {
 
             if ($request->fraud_status === 'challenge') {
                 $order->update([
@@ -101,7 +108,8 @@ class OrderController extends Controller
         try {
             $snapToken = null;
             $orderId = null;
-            DB::transaction(function () use ($request, &$orderId, &$snapToken) {
+            $orderCode = null;
+            DB::transaction(function () use ($request, &$orderId, &$snapToken, &$orderCode) {
                 $itemData = [];
                 $items = $request->items;
 
@@ -127,7 +135,7 @@ class OrderController extends Controller
                 $order = Order::create([
                     'order_code' => $orderCode,
                     'order_amount' => $total,
-                    'order_change' => $request->change_amount,
+                    'order_change' => $paymentMethod == 'cash' ? $request->change_amount : 0,
                     'status' => 1
                 ]);
 
@@ -155,7 +163,8 @@ class OrderController extends Controller
 
                     $params = [
                         'transaction_details' => [
-                            'order_id' => $order->order_code,
+                            'order_id' => $order->id,
+                            'order_code' => $order->order_code,
                             'gross_amount' => (int) round($total)
                         ],
                         'customer_details' => [
@@ -173,13 +182,16 @@ class OrderController extends Controller
                     'success' => true,
                     'payment_method' => 'midtrans',
                     'snap_token' => $snapToken,
-                    'order_id' => $orderId
+                    'order_id' => $orderId,
+                    'order_code' => $orderCode,
                 ]);
             } else {
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Transaksi berhasil di proses!',
-                    'payment_method' => 'cash'
+                    'payment_method' => 'cash',
+                    'order_id' => $orderId,
+                    'order_code' => $orderCode,
                 ], 200);
             }
 
